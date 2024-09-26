@@ -1,0 +1,4 @@
+# conf/base/parameters.yml
+data: "data/wine.csv"  # Caminho para o dataset
+target: "target"       # Nome da coluna alvo
+model_save_path: "data/model.pkl"  # Caminho para salvar o modelo

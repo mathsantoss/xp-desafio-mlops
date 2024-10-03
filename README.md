@@ -1,4 +1,4 @@
-# 🍷 XP-MLOps API
+# XP-MLOps API
 
 Este projeto implementa uma API de inferência em tempo real para previsões de Machine Learning usando FastAPI e Kedro. O modelo utilizado neste projeto é baseado no dataset de vinho da biblioteca `sklearn`. A aplicação também foi containerizada usando Docker para facilitar a execução e a implantação.
 

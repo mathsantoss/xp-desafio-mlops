@@ -1,0 +1,22 @@
+# # conf/base/catalog.yml
+
+# X:
+#   type: MemoryDataSet
+# y:
+#   type: MemoryDataSet
+# X_train:
+#   type: MemoryDataSet
+# X_test:
+#   type: MemoryDataSet
+# y_train:
+#   type: MemoryDataSet
+# y_test:
+#   type: MemoryDataSet
+
+# model:
+#   type: MemoryDataSet
+
+# mse:
+#   type: MemoryDataSet
+# y_pred:
+#   type: MemoryDataSet

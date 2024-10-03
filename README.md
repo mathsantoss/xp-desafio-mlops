@@ -1,98 +1,158 @@
-# xp-mlops
+# XP-MLOps API
 
-## Overview
+Este projeto implementa uma API de inferência em tempo real para previsões de Machine Learning usando FastAPI e Kedro. A aplicação foi containerizada usando Docker para fácil execução e implantação.
 
-This is your new Kedro project with PySpark setup, which was generated using `kedro 0.19.8`.
+## Pré-requisitos
 
-Take a look at the [Kedro documentation](https://docs.kedro.org) to get started.
+Antes de começar, certifique-se de que você tem o seguinte instalado em seu sistema:
 
-## Rules and guidelines
+- [Docker](https://docs.docker.com/get-docker/)
+- [Python 3.11+](https://www.python.org/downloads/)
+- [Kedro](https://kedro.readthedocs.io/en/stable/get_started/install.html)
 
-In order to get the best out of the template:
+## Instruções de Uso
 
-* Don't remove any lines from the `.gitignore` file we provide
-* Make sure your results can be reproduced by following a [data engineering convention](https://docs.kedro.org/en/stable/faq/faq.html#what-is-data-engineering-convention)
-* Don't commit data to your repository
-* Don't commit any credentials or your local configuration to your repository. Keep all your credentials and local configuration in `conf/local/`
+### 1. Construir a imagem Docker
 
-## How to install dependencies
+Para construir a imagem Docker do projeto, execute o seguinte comando a partir do diretório raiz do projeto, onde está localizado o `Dockerfile`.
 
-Declare any dependencies in `requirements.txt` for `pip` installation.
+```bash
+docker build -t xp-mlops-api .
+```
 
-To install them, run:
+Este comando fará o build da imagem Docker com todas as dependências necessárias e incluirá o artefato do modelo treinado.
+
+### 2. Executar o container Docker
+
+Após a construção da imagem, execute o container com o seguinte comando:
+
+```bash
+docker run -d -p 8000:8000 xp-mlops-api
+```
+
+Aqui está o que o comando faz:
+- `-d`: executa o container em segundo plano (modo detached).
+- `-p 8000:8000`: mapeia a porta 8000 do host para a porta 8000 do container.
+- `xp-mlops-api`: nome da imagem construída.
+
+Agora, a API estará disponível em `http://localhost:8000`.
+
+### 3. Testar a API
+
+Você pode acessar a documentação interativa da API usando o Swagger UI, que está disponível em:
 
 ```
+http://localhost:8000/docs
+```
+
+Ou, se preferir o Redoc:
+
+```
+http://localhost:8000/redoc
+```
+
+### 4. Parar o container
+
+Para parar o container, você pode listar os containers em execução:
+
+```bash
+docker ps
+```
+
+E, em seguida, parar o container usando o ID mostrado:
+
+```bash
+docker stop <container_id>
+```
+
+## Rodando Localmente (Sem Docker)
+
+Se você preferir rodar a API localmente sem Docker, siga as instruções abaixo:
+
+### 1. Instale as dependências
+
+Certifique-se de que você está em um ambiente virtual Python e execute o comando:
+
+```bash
 pip install -r requirements.txt
 ```
 
-## How to run your Kedro pipeline
+### 2. Treine o modelo usando Kedro
 
-You can run your Kedro project with:
+Para treinar o modelo, utilize o comando abaixo para executar o pipeline do Kedro:
 
-```
+```bash
 kedro run
 ```
 
-## How to test your Kedro project
+Isso irá rodar o pipeline de treinamento e salvar o modelo treinado no diretório especificado no pipeline (`model/model.pkl`).
 
-Have a look at the files `src/tests/test_run.py` and `src/tests/pipelines/data_science/test_pipeline.py` for instructions on how to write your tests. Run the tests as follows:
+### 3. Suba a API localmente
 
-```
-pytest
-```
+Com o modelo treinado, suba a API localmente utilizando o Uvicorn:
 
-To configure the coverage threshold, look at the `.coveragerc` file.
-
-## Project dependencies
-
-To see and update the dependency requirements for your project use `requirements.txt`. Install the project requirements with `pip install -r requirements.txt`.
-
-[Further information about project dependencies](https://docs.kedro.org/en/stable/kedro_project_setup/dependencies.html#project-specific-dependencies)
-
-## How to work with Kedro and notebooks
-
-> Note: Using `kedro jupyter` or `kedro ipython` to run your notebook provides these variables in scope: `catalog`, `context`, `pipelines` and `session`.
->
-> Jupyter, JupyterLab, and IPython are already included in the project requirements by default, so once you have run `pip install -r requirements.txt` you will not need to take any extra steps before you use them.
-
-### Jupyter
-To use Jupyter notebooks in your Kedro project, you need to install Jupyter:
-
-```
-pip install jupyter
+```bash
+uvicorn src.xp_mlops.app:application --host 0.0.0.0 --port 8000 --reload
 ```
 
-After installing Jupyter, you can start a local notebook server:
+Agora a API estará disponível em `http://localhost:8000` e com suporte a hot-reload para desenvolvimento.
 
-```
-kedro jupyter notebook
-```
+## Estrutura do Projeto
 
-### JupyterLab
-To use JupyterLab, you need to install it:
+- `src/xp_mlops/api/`: contém as rotas da API e os endpoints.
+- `src/xp_mlops/create_app.py`: função que cria a instância da aplicação FastAPI.
+- `src/xp_mlops/app.py`: ponto de entrada da aplicação.
+- `model/model.pkl`: modelo treinado usado para inferências.
 
-```
-pip install jupyterlab
-```
+## Comandos Úteis
 
-You can also start JupyterLab:
+### Verificar imagens Docker
 
-```
-kedro jupyter lab
+```bash
+docker images
 ```
 
-### IPython
-And if you want to run an IPython session:
+### Verificar containers em execução
 
+```bash
+docker ps
 ```
-kedro ipython
+
+### Construir e rodar a imagem em um único comando
+
+```bash
+docker build -t xp-mlops-api . && docker run -d -p 8000:8000 xp-mlops-api
 ```
 
-### How to ignore notebook output cells in `git`
-To automatically strip out all output cell contents before committing to `git`, you can use tools like [`nbstripout`](https://github.com/kynan/nbstripout). For example, you can add a hook in `.git/config` with `nbstripout --install`. This will run `nbstripout` before anything is committed to `git`.
+Isso irá construir e iniciar a API automaticamente.
 
-> *Note:* Your output cells will be retained locally.
+## Problemas Comuns
 
-## Package your Kedro project
+### Docker Daemon Não Encontrado
 
-[Further information about building project documentation and packaging your project](https://docs.kedro.org/en/stable/tutorial/package_a_project.html)
+Se você receber um erro relacionado ao Docker Daemon, verifique se o Docker está rodando com:
+
+```bash
+sudo systemctl start docker
+```
+
+## Contribuições
+
+Se você deseja contribuir, siga os seguintes passos:
+
+1. Faça um fork do repositório.
+2. Crie uma branch para a sua feature: `git checkout -b minha-feature`.
+3. Faça commit das suas alterações: `git commit -m 'Adicionei minha feature'`.
+4. Faça o push para a branch: `git push origin minha-feature`.
+5. Abra um Pull Request.
+
+## Licença
+
+Este projeto está licenciado sob a [MIT License](LICENSE).
+
+
+
+
+kedro run --pipeline wine_pipeline
+
+sudo grep -iR "docker" /var/log |grep -i "Error" 

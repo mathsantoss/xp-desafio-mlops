@@ -1,4 +1,4 @@
-# conf/base/parameters.yml
 data: "data/wine.csv"  # Caminho para o dataset
-target: "target"       # Nome da coluna alvo
-model_save_path: "data/model.pkl"  # Caminho para salvar o modelo
+model_save_path: "model/model.pkl"  # Caminho para salvar o modelo
+test_size: 0.2
+random_state: 42
